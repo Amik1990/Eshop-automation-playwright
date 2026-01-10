@@ -1,0 +1,74 @@
+name: 🧪 Playwright Python Tests
+
+on:
+  push:
+    branches: [ master, acc ]
+  pull_request:
+    branches: [ master, acc ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # ZDE NASTAVUJEME PROMĚNNÉ PROSTŘEDÍ PRO CELÝ JOB
+    env:
+      BASE_URL: https://www.motozem.cz
+      BROWSER_HEADLESS: true  # Důležité: Na serveru musí být vždy headless!
+      TIMEOUT: 10000
+
+    steps:
+      - name: ⬇️ Checkout kódu
+        uses: actions/checkout@v3
+
+      - name: 🐍 Nastavení Pythonu
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: 📦 Instalace závislostí
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install loguru
+          playwright install
+
+      - name: 🛠️ Instalace Allure CLI
+        run: |
+          wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+          tar -xzf allure-2.27.0.tgz
+          sudo mv allure-2.27.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
+          allure --version
+
+      - name: ✅ Nastavení PYTHONPATH
+        run: echo "PYTHONPATH=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+
+      - name: ▶️ Spuštění testů s Allure výstupem
+        run: |
+          mkdir -p allure-results
+          PYTHONPATH=${GITHUB_WORKSPACE} pytest tests/ --disable-warnings --alluredir=allure-results
+
+
+      - name: 🧾 Debug:výpis obsahu složky
+        run: |
+          echo "Obsah workspace:"
+          ls -la
+          echo "Obsah složky allure-results:"
+          ls -la allure-results || echo "Složka allure-results neexistuje"
+
+      - name: 📊 Generování Allure Reportu
+        if: always()
+        run: |
+          allure generate allure-results --clean -o allure-report
+
+      - name: 💾 Uložení artefaktu (Allure výsledky)
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: 💾 Uložení artefaktu (Allure HTML report)
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report

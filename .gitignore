@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtuální prostředí
+.venv/
+venv/
+ENV/
+
+# Pytest a Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Ruff
+.ruff_cache/
+
+# Allure reporty
+allure-results/
+allure-report/
+
+# Logy
+logs/
+*.log
+
+# Prostředí a tajné soubory
+.env
+auth.json
+
+# IDE
+.idea/
+.vscode/
+
+# Ostatní
+fix.txt
+*.odt
+*.pdf

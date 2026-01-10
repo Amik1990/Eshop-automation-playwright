@@ -1,0 +1,14 @@
+services:
+  tests:
+    build: .
+    volumes:
+      # Propojíme složku s výsledky v kontejneru se složkou u mě na disku
+      - ./allure-results:/app/allure-results
+      # Propojíme i logy, abych je viděl
+      - ./logs:/app/logs
+    environment:
+      # Předáme proměnné prostředí (např. URL)
+      - BASE_URL=https://www.motozem.cz
+      - BROWSER_HEADLESS=true
+      # V Dockeru musí běžet headless vždy (nemá monitor)
+    command: pytest --alluredir=allure-results

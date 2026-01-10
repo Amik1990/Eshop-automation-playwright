@@ -1,0 +1,25 @@
+# Ignoruj virtuální prostředí (v kontejneru si vytvoříme vlastní)
+.venv
+venv
+ENV
+
+# Ignoruj cache a dočasné soubory
+__pycache__
+.pytest_cache
+.cache
+*.pyc
+*.pyo
+*.pyd
+
+# Ignoruj Git
+.git
+.gitignore
+
+# Ignoruj IDE nastavení
+.idea
+.vscode
+
+# Ignoruj výsledky (ty chceme generovat čerstvé)
+allure-results
+allure-report
+logs/*.log

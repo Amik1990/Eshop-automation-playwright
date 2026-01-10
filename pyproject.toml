@@ -1,0 +1,21 @@
+[tool.pytest.ini_options]
+# -n auto: Spustí testy paralelně (vyžaduje pytest-xdist)
+# --alluredir=allure-results: Uloží výsledky pro Allure report
+addopts = "-n auto --alluredir=allure-results"
+
+[tool.ruff]
+# Nastavení linteru a formátovače Ruff
+line-length = 150  # Maximální délka řádku (pro testy je lepší víc než standardních 88)
+target-version = "py310" # Cílíme na moderní Python
+
+[tool.ruff.lint]
+# Zapneme základní pravidla:
+# E = pycodestyle errors (chyby stylu)
+# F = Pyflakes (logické chyby, např. nepoužité importy)
+# I = isort (třídění importů)
+select = ["E", "F", "I"]
+ignore = []   # "Neignoruj nic. Hlas mi úplně všechny chyby, které máš zapnuté."
+
+[tool.ruff.format]
+quote-style = "double" # Vynutíme dvojité uvozovky "text"
+indent-style = "space" # Odsazování mezerami
