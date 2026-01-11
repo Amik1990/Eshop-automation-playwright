@@ -1,5 +1,5 @@
 import re
-
+from utils.exceptions import NetworkResponseError, ElementNotVisibleError
 from utils.logger_config import get_logger
 from playwright.sync_api import Page, Locator, expect, Response
 
@@ -40,7 +40,33 @@ class BasePage():
             # Vracíme True (našli jsme) jen pokud sedí URL A ZÁROVEŇ server řekl "200 OK".
             return url_match and response.status == 200
 
-        pokracovat
+            # v try sekci pak pouziji vytvorenou funkci predicate
+        try:
+            with self.page.expect_response(predicate, timeout=10000):
+                self.click(element, name)
+            self.LOG.success(f"Odpověď pro {url_pattern} byla nalezena.")
+
+        except Exception as e:
+            self.LOG.error(f"Časový limit vypršel při čekání na odpověď '{url_pattern}' po kliknutí na '{name}'.")
+            raise NetworkResponseError from e
+
+    def expect_visible(self, element: Locator, name: str = "element", timeout: int = 5000) -> None:
+        """
+        Ověří, že je prvek viditelný.
+
+        Args:
+            element: Locator prvku.
+            name: Název prvku pro logování.
+            timeout: Maximální čas čekání v ms.
+        """
+        self.LOG.info(f"Ověřuji, zda {name} je viditelný.")
+        try:
+            expect(element).to_be_visible(timeout=timeout)
+            self.LOG.success(f"Prvek '{name}' je viditelný")
+        except Exception as e:
+            self.LOG.error(f"Prvek '{name}' není viditelný! (Timeout: {timeout}ms)")
+            # Vyhodíme naši vlastní chybu
+            raise ElementNotVisibleError(name, timeout) from e
 
     def navigate(self, url:str) -> None:
         self.LOG.info(f"Navigace na URL: {url}")
@@ -50,13 +76,26 @@ class BasePage():
     def accept_cookies(self):
         """Pokusí se potvrdit cookies lištu, pokud je viditelná."""
         self.LOG.info(f"Kontrola přítomnosti cookies lišty")
-        # Regex pro běžné texty: OK, Přijmout, Accept, Souhlasím... (?i) = case insensitive
-        pattern = re.compile(r"OK|Přijmout|Accept|Souhlasím|Rozumím|Allow all", re.IGNORECASE)
 
-        # Hledáme tlačítko NEBO odkaz. .first vezme první nalezený, aby to nespadlo na 'strict mode'
+        # 1. Specifická kontrola pro Google Funding Choices (častý overlay, který blokuje klikání)
+        # Tlačítko pro souhlas má obvykle třídu .fc-cta-consent
+        fc_consent_button = self.page.locator(".fc-cta-consent")
+        if fc_consent_button.is_visible():
+            self.click(fc_consent_button, "Google FC Consent Button")
+            return
+
+        # 2. Obecná kontrola pro ostatní lišty
+        # Regex pro běžné texty: OK, Přijmout, Accept...
+        # Používáme \b pro hranice slov, aby to nechytalo např. "Kookie" (obsahuje 'ok')
+        pattern = re.compile(r"\b(OK|Přijmout|Accept|Souhlasím|Souhlas|Rozumím|Allow all)\b", re.IGNORECASE)
+
+        # Hledáme tlačítko NEBO odkaz. .first vezme první nalezený
         button = self.page.get_by_role("button", name=pattern).or_(self.page.get_by_role("link", name=pattern)).first
 
         if button.is_visible():
-            self.click(button, "Cookies Consent Button")
+            try:
+                self.click(button, "Cookies Consent Button")
+            except Exception as e:
+                self.LOG.warning(f"Našel jsem tlačítko cookies, ale nešlo na něj kliknout: {e}")
         else:
             self.LOG.debug("Cookie lišta nebyla nalezena (nebo je již potvrzena).")
