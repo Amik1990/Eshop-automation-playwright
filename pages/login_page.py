@@ -8,3 +8,7 @@ class LoginPage(BasePage):
         self.navigate(url)
         self.accept_cookies()
 
+        loginToYourAccount = self.page.get_by_role("heading", name="Login to your account")
+        self.expect_visible(loginToYourAccount, name="Login to your account")
+        self.LOG.info(f"Tile 'Login to your account' je viditelný.")
+
