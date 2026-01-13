@@ -12,3 +12,17 @@ class LoginPage(BasePage):
         self.expect_visible(loginToYourAccount, name="Login to your account")
         self.LOG.info(f"Tile 'Login to your account' je viditelný.")
 
+    def new_user_signup_is_visible(self):
+        new_user_signup_title = self.page.get_by_role("heading", name="New User Signup!")
+        self.expect_visible(new_user_signup_title, name="New User Signup!")
+
+    def signup_user(self, name: str, email: str):
+        name_input = self.page.get_by_role("textbox", name="Name")
+        email_input = self.page.locator("form").filter(has_text="Signup").get_by_placeholder("Email Address")
+        signup_button = self.page.get_by_role("button", name="Signup")
+
+        self.fill(name_input, name, name="Name input")
+        self.fill(email_input, email, name="Email input")
+        self.LOG.info(f"User {name} and email {email} is filled in.")
+        self.click(signup_button, name="Signup button")
+

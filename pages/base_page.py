@@ -68,6 +68,18 @@ class BasePage():
             # Vyhodíme naši vlastní chybu
             raise ElementNotVisibleError(name, timeout) from e
 
+    def fill(self, selector: Locator | str, value: str, name: str = "input field") -> None:
+        """
+        Vyplnění input pole.
+        Podporuje jak string selektor, tak Locator objekt.
+        """
+        self.LOG.info(f"Vyplňování {name} (Selektor: {selector}) s hodnotou: '***'")
+
+        if hasattr(selector, "fill") and not isinstance(selector, str):
+            selector.fill(value)
+        else:
+            self.page.fill(selector, value)
+
     def navigate(self, url:str) -> None:
         self.LOG.info(f"Navigace na URL: {url}")
         self.page.goto(url)
