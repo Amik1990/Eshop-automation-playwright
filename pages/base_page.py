@@ -73,7 +73,9 @@ class BasePage():
         Vyplnění input pole.
         Podporuje jak string selektor, tak Locator objekt.
         """
-        self.LOG.info(f"Vyplňování {name} (Selektor: {selector}) s hodnotou: '***'")
+        # Pokud je v názvu pole "password" nebo "heslo", skryjeme hodnotu v logu
+        log_value = "***" if any(s in name.lower() for s in ["password", "heslo"]) else value
+        self.LOG.info(f"Vyplňování {name} s hodnotou: '{log_value}'")
 
         if hasattr(selector, "fill") and not isinstance(selector, str):
             selector.fill(value)
