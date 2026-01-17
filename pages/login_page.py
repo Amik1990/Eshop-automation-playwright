@@ -20,9 +20,15 @@ class LoginPage(BasePage):
         name_input = self.page.get_by_role("textbox", name="Name")
         email_input = self.page.locator("form").filter(has_text="Signup").get_by_placeholder("Email Address")
         signup_button = self.page.get_by_role("button", name="Signup")
+        enter_account_information_heading = self.page.get_by_text("Enter Account Information")
+
 
         self.fill(name_input, name, name="Name input")
         self.fill(email_input, email, name="Email input")
         self.LOG.info(f"User {name} and email {email} is filled in.")
         self.click(signup_button, name="Signup button")
+        self.expect_visible(enter_account_information_heading, name="Enter Account Information")
+
+
+
 
