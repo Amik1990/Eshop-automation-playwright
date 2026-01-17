@@ -1,5 +1,7 @@
 from .base_page import BasePage
 from utils.config import config
+from playwright.sync_api import expect
+import re
 
 class SignupPage(BasePage):
 
@@ -20,6 +22,8 @@ class SignupPage(BasePage):
         self.zipcode =self.page.locator("#zipcode")
         self.mobile_number = self.page.get_by_role("textbox", name="Mobile Number *")
         self.create_account_button =self.page.get_by_role("button", name="Create Account")
+        self.account_created = self.page.get_by_text("Account Created!")
+        self.continue_button = self.page.get_by_role("link", name="Continue")
 
         # Lokátory pro select boxy
         self.day_select = self.page.locator("#days")
@@ -56,6 +60,12 @@ class SignupPage(BasePage):
         self.fill(self.zipcode, zipcode, name="Zipcode")
         self.fill(self.mobile_number, mobile_number, name="Mobile number")
         self.click(self.create_account_button, name="Create account button")
+        self.expect_visible(self.account_created, name="Account created")
+        expect(self.page).to_have_url(re.compile("https://automationexercise.com/account_created"))
+        self.click(self.continue_button, name="Continue button")
+        expect(self.page).to_have_url(re.compile("https://automationexercise.com/"))
+        self.LOG.info(f"Úspěšně přesměrováno na Home page.")
+
 
 
 

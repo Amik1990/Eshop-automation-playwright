@@ -37,4 +37,21 @@ def load_home_page(page: Page):
 def load_login_page(page: Page):
     return setup_page(LoginPage, page)
 
-
+@pytest.fixture
+def user_data():
+    """Vygeneruje náhodná data pro uživatele."""
+    fake = Faker()
+    return {
+        "name": fake.name(),
+        "email": fake.email(),
+        "password": fake.password(),
+        "first_name": fake.first_name(),
+        "last_name": fake.last_name(),
+        "address": fake.street_address(),
+        "country": "United States", # Zde raději fixní hodnotu, aby seděla do select boxu
+        "state": fake.state(),
+        "city": fake.city(),
+        "zipcode": fake.zipcode(),
+        "mobile_number": fake.phone_number(),
+        "company": fake.company()
+    }
