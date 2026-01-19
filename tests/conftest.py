@@ -1,7 +1,7 @@
 import pytest
 from faker import Faker
 from utils.fixture_utils import setup_page
-from pages import HomePage, LoginPage
+from pages import HomePage, LoginPage, SignupPage
 from playwright.sync_api import Page
 from utils.config import config
 
@@ -53,5 +53,58 @@ def user_data():
         "city": fake.city(),
         "zipcode": fake.zipcode(),
         "mobile_number": fake.phone_number(),
-        "company": fake.company()
+        "company": fake.company(),
+        "day": "15",
+        "month": "9",
+        "year": "2006"
     }
+
+
+@pytest.fixture
+def registered_user(page, user_data):
+    """
+    Tato fixtura provede registraci uživatele a vrátí jeho data.
+    Používá se pro testy, které vyžadují existujícího uživatele (např. Login).
+    """
+    home_page = HomePage(page)
+    login_page = LoginPage(page)
+    signup_page = SignupPage(page)
+
+    # 1. Registrace
+    home_page.load()
+    home_page.click_signup_login()
+    login_page.signup_user(user_data["name"], user_data["email"])
+    
+    signup_page.enter_account_information(
+        user_data["name"], 
+        user_data["email"], 
+        user_data["password"], 
+        user_data["day"], 
+        user_data["month"], 
+        user_data["year"]
+    )
+    
+    signup_page.enter_address_information(
+        first_name=user_data["first_name"],
+        last_name=user_data["last_name"],
+        company=user_data["company"],
+        address=user_data["address"],
+        country=user_data["country"],
+        state=user_data["state"],
+        city=user_data["city"],
+        zipcode=user_data["zipcode"],
+        mobile_number=user_data["mobile_number"]
+    )
+    
+    # Ověření, že jsme přihlášeni (po registraci nás to rovnou přihlásí)
+    # home_page.verify_logged_in_user(user_data["name"]) # Toto může být v enter_address_information nebo zde
+    
+    # 2. Odhlášení (aby byl připraven čistý stav pro Login test)
+    home_page.click_logout()
+
+    # 3. Vrátíme data, aby test věděl, s kým se má přihlásit
+    yield user_data
+    
+    # 4. Teardown (volitelné): Smazání uživatele po testu
+    # Zde bychom se museli znovu přihlásit a smazat účet.
+    # Prozatím vynecháme, aby to nebylo moc složité.

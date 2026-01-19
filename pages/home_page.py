@@ -15,6 +15,7 @@ class HomePage(BasePage):
         self.delete_account_button = self.page.get_by_role("link", name=" Delete Account")
         self.account_deleted_title = self.page.get_by_text("Account Deleted!")
         self.continue_button = self.page.get_by_role("link", name="Continue")
+        self.logout_button = self.page.get_by_role("link", name="Logout")
 
     def load(self, url: str = f"{config.BASE_URL}") -> None:
         self.LOG.info(f"Načítám stránku {url}")
@@ -40,6 +41,14 @@ class HomePage(BasePage):
         self.click(self.continue_button, name="Continue")
         expect(self.page).to_have_url(re.compile("https://automationexercise.com"))
         self.LOG.info(f"Úspěšně přesměrováno na Home page.")
+
+    def click_logout(self):
+        self.click(self.logout_button)
+        expect(self.page).to_have_url(re.compile("https://automationexercise.com/login"))
+        self.LOG.info(f"Úspěšně přesměrováno na Login page.")
+
+
+
 
 
 
