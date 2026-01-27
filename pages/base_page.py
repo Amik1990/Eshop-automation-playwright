@@ -85,7 +85,8 @@ class BasePage():
     def navigate(self, url:str) -> None:
         self.LOG.info(f"Navigace na URL: {url}")
         self.page.goto(url)
-        self.page.wait_for_load_state("networkidle")
+        # Změna z networkidle na load pro rychlejší a stabilnější načítání
+        self.page.wait_for_load_state("load")
 
     def accept_cookies(self):
         """Pokusí se potvrdit cookies lištu, pokud je viditelná."""

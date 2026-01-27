@@ -35,6 +35,14 @@ class HomePage(BasePage):
 
     def delete_account(self):
         self.click(self.delete_account_button, name=" Delete Account")
+
+        # Kontrola na Google Vignette reklamu
+        if "google_vignette" in self.page.url:
+            self.LOG.warning("Detekována Google Vignette reklama. Zkouším ji obejít.")
+            # Zkusíme se vrátit zpět a kliknout znovu
+            self.page.go_back()
+            self.click(self.delete_account_button, name=" Delete Account (pokus 2)")
+
         self.expect_visible(self.account_deleted_title, name="Account Deleted!")
 
     def click_continue(self):

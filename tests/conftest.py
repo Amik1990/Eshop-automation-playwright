@@ -74,14 +74,15 @@ def registered_user(page, user_data):
     home_page.load()
     home_page.click_signup_login()
     login_page.signup_user(user_data["name"], user_data["email"])
-    
+
+    #nasledujici radky muzu psat i bez promennych (červene): např: user_data["name"]
     signup_page.enter_account_information(
-        user_data["name"], 
-        user_data["email"], 
-        user_data["password"], 
-        user_data["day"], 
-        user_data["month"], 
-        user_data["year"]
+        name=user_data["name"],
+        email=user_data["email"],
+        password=user_data["password"],
+        day=user_data["day"],
+        month=user_data["month"],
+        year=user_data["year"]
     )
     
     signup_page.enter_address_information(
@@ -98,13 +99,10 @@ def registered_user(page, user_data):
     
     # Ověření, že jsme přihlášeni (po registraci nás to rovnou přihlásí)
     # home_page.verify_logged_in_user(user_data["name"]) # Toto může být v enter_address_information nebo zde
-    
+
     # 2. Odhlášení (aby byl připraven čistý stav pro Login test)
     home_page.click_logout()
 
     # 3. Vrátíme data, aby test věděl, s kým se má přihlásit
     yield user_data
-    
-    # 4. Teardown (volitelné): Smazání uživatele po testu
-    # Zde bychom se museli znovu přihlásit a smazat účet.
-    # Prozatím vynecháme, aby to nebylo moc složité.
+

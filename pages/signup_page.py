@@ -33,11 +33,8 @@ class SignupPage(BasePage):
 
     def enter_account_information(self, name: str, email: str, password: str, day: str, month: str, year: str):
         self.click(self.mr_radio_button, name="Mr. radio button")
-
-        # Email a name je read-only, jen zkontrolujeme viditelnost
         self.expect_visible(self.name_field, name=name)
         self.expect_visible(self.email_field, name=email)
-
         self.fill(self.password_field, password, name="password")
         
         # Výběr data narození
@@ -65,6 +62,9 @@ class SignupPage(BasePage):
         self.click(self.continue_button, name="Continue button")
         expect(self.page).to_have_url(re.compile("https://automationexercise.com/"))
         self.LOG.info(f"Úspěšně přesměrováno na Home page.")
+
+
+
 
 
 

@@ -45,3 +45,7 @@ class LoginPage(BasePage):
         self.fill(self.login_email_input, email, name="Login Email")
         self.fill(self.login_password_input, password, name="Login Password")
         self.click(self.login_button, name="Login Button")
+
+    def verify_incorrect_login(self):
+        username = self.page.get_by_text(f"Your email or password is incorrect!")
+        self.expect_visible(username, name=f"Your email or password is incorrect!")
