@@ -2,8 +2,7 @@ from pages import HomePage, LoginPage
 
 def test_incorrect_login(load_home_page: HomePage, user_data):
     """
-    Test ověří přihlášení existujícího uživatele.
-    Uživatel je vytvořen fixturou 'registered_user'.
+    Test ověří, že se nejde přihlásit s nevalidními daty uživatele.
     """
     # 1. Získání dat z fixtury
     email = user_data["email"]

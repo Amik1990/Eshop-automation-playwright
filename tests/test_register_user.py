@@ -7,6 +7,10 @@ import pytest
     [("15", "9", "2006")]
 )
 def test_register_user(load_home_page: HomePage, user_data, day, month, year):
+    """
+      Test ověří vytvoření nového účtu a následně smazání.
+      Uživatel je vytvořen fixturou 'registered_user'.
+      """
     # Rozbalíme data z fixtury user_data
     name = user_data["name"]
     email = user_data["email"]

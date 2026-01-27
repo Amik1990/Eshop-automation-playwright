@@ -2,7 +2,7 @@ from pages import HomePage, LoginPage
 
 def test_logout_user(load_home_page: HomePage, registered_user):
     """
-    Test ověří přihlášení existujícího uživatele.
+    Test ověří odhlášení existujícího uživatele.
     Uživatel je vytvořen fixturou 'registered_user'.
     """
     # 1. Získání dat z fixtury
