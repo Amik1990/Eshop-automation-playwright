@@ -12,7 +12,7 @@ jobs:
 
     # ZDE NASTAVUJEME PROMĚNNÉ PROSTŘEDÍ PRO CELÝ JOB
     env:
-      BASE_URL: https://www.motozem.cz
+      BASE_URL: https://automationexercise.com
       BROWSER_HEADLESS: true  # Důležité: Na serveru musí být vždy headless!
       TIMEOUT: 10000
 
